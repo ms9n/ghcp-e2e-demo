@@ -39,6 +39,7 @@ def _create_github_issue(title: str, body: str, labels: list[str]) -> dict:
 @define_tool(
     name="create_github_issue",
     description="Creates a GitHub issue to report a detected runtime error. Use this when you have analyzed an error and want to file a bug report.",
+    skip_permission=True,
 )
 def create_issue_tool(params: CreateIssueParams) -> str:
     result = _create_github_issue(params.title, params.body, params.labels)
@@ -75,15 +76,45 @@ Error details:
 
 Requirements for the issue:
 - Title must start with "[Auto-Bug]" followed by the error type and a brief description
-- Body must include: error type, full traceback, request context, timestamp, and your analysis of the likely root cause
-- Format the body in markdown with clear sections
+- Body must use the following markdown template with these exact section headers:
+
+## Error Summary
+Brief description of the error.
+
+## Reproduction Steps
+1. Start the application
+2. [Exact HTTP method and URL with parameters that triggered the error]
+3. Observe the error response
+
+**HTTP Method:** `[METHOD]`
+**Endpoint:** `[path with query parameters]`
+**Request Body:** [body if applicable, or "N/A"]
+
+## Error Details
+- **Type:** `[error type]`
+- **Message:** [error message]
+- **Timestamp:** [ISO timestamp]
+
+## Traceback
+```
+[full traceback]
+```
+
+## Request Context
+```json
+[request context JSON]
+```
+
+## Root Cause Analysis
+[Your analysis of the likely root cause]
+
 - Always include the labels: ["needs-verification", "auto-bug"]
 
 Create the issue now using the create_github_issue tool."""
 
     async with CopilotClient() as client:
         session = await client.create_session(
-            model="gpt-4.1",
+            model="claude-opus-4-6",
             tools=[create_issue_tool],
             on_permission_request=lambda _: {"kind": "approved"},
         )

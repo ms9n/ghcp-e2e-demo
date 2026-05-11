@@ -67,11 +67,14 @@ The issue you are verifying:
 
 ### 1. Parse the Issue
 
-Read the issue body carefully. Extract:
-- The error type (e.g., `ZeroDivisionError`)
-- The endpoint and parameters that triggered the error (e.g., `/calculate?a=10&b=0`)
-- The full traceback
-- Any environment details
+Read the issue body carefully. Extract the following from the structured sections:
+- **From "Reproduction Steps"**: The exact HTTP method, endpoint, and parameters needed to trigger the error
+- **From "Error Details"**: The error type and message you expect to see
+- **From "Traceback"**: The full stack trace to compare against
+- **From "Request Context"**: Additional request details (headers, body, etc.)
+
+If the issue body does not contain structured reproduction steps, analyze the
+traceback and error details to infer what request would trigger the error.
 
 ### 2. Build and Run the Application
 
@@ -82,23 +85,33 @@ sleep 5
 curl -s http://localhost:8080/health
 ```
 
-Wait for the health check to pass.
+Wait for the health check to pass. If the app fails to build or start, report
+that as your finding.
 
 ### 3. Reproduce the Error
 
-Use Playwright MCP to:
-1. Navigate to `http://localhost:8080/` and take a screenshot of the homepage (confirms app is running)
-2. Navigate to the endpoint that caused the error (e.g., `http://localhost:8080/calculate?a=10&b=0`)
-3. Take a screenshot of the error response
-4. Check the HTTP status code
+Using the reproduction steps extracted from the issue:
+
+1. Use Playwright MCP to navigate to `http://localhost:8080/` and take a
+   screenshot to confirm the app is running
+2. Reproduce the error by making the exact request described in the issue
+   (navigate to the endpoint with the specified parameters using Playwright)
+3. Take a screenshot of the response
+4. Verify the HTTP status code and error message match what was reported
+5. If the issue mentions specific conditions (e.g., certain parameter values,
+   specific request body), test those exact conditions
+
+**Important**: Do NOT hardcode any specific endpoints or parameters — always
+derive them from the issue body.
 
 ### 4. Classify the Issue
 
-**If the error IS reproducible:**
+**If the error IS reproducible** (same error type and similar message):
 - Add a detailed comment with:
   - Confirmation that the error was reproduced
   - Screenshots showing the error
   - The HTTP status code received
+  - The exact request you used to reproduce it
   - Your analysis of the root cause
   - Recommendation to assign to the `bug-solver` custom agent for a fix
 - Add the label `verified-bug`
@@ -106,7 +119,7 @@ Use Playwright MCP to:
 
 **If the error is NOT reproducible:**
 - Add a comment explaining:
-  - What you tested
+  - What you tested (exact requests made)
   - What the actual result was (with screenshots)
   - Why the error could not be reproduced
 - Close the issue with the comment
@@ -120,6 +133,8 @@ docker stop verify-app && docker rm verify-app
 ## Important Notes
 
 - Always take screenshots as evidence
-- Be thorough in your testing — try the exact parameters from the issue
+- Derive ALL test parameters from the issue body — never assume specific endpoints
 - If the app fails to build or start, that itself is a finding — report it
 - Do NOT modify any source code — you are only verifying, not fixing
+- If reproduction steps are unclear, try your best to infer them from the
+  traceback and error context, and note any assumptions in your comment

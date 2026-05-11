@@ -1,9 +1,10 @@
+import os
 import threading
 
 from dotenv import load_dotenv
 from flask import Flask, jsonify, request
 
-load_dotenv()
+load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 
 from error_reporter import report_error_sync
 
