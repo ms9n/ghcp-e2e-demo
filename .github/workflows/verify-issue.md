@@ -1,7 +1,7 @@
 ---
 description: >
   Agentic workflow that verifies auto-reported bugs by reproducing them
-  in a sandboxed environment using Playwright, then classifies the issue
+  dynamically using Playwright, then classifies the issue
   as a verified bug or closes it as non-reproducible.
 
 name: Verify Auto-Reported Issue
@@ -23,12 +23,17 @@ tools:
     toolsets: [issues]
 
   bash:
-    - docker:*
+    - pip:*
+    - pip3:*
+    - python:*
+    - python3:*
     - npm:*
     - npx:*
     - cat:*
     - curl:*
     - sleep:*
+    - kill:*
+    - lsof:*
     - playwright-cli:*
 
   playwright:
@@ -57,7 +62,7 @@ timeout-minutes: 15
 # Bug Verification Agent
 
 You are a QA engineer verifying an auto-reported bug. Your job is to reproduce
-the reported error in a local sandboxed environment, take evidence screenshots,
+the reported error by running the application, take evidence screenshots,
 and classify the issue.
 
 ## Context
@@ -82,17 +87,19 @@ Extract the following from the structured sections:
 If the issue body does not contain structured reproduction steps, analyze the
 traceback and error details to infer what request would trigger the error.
 
-### 2. Build and Run the Application
+### 2. Install Dependencies and Run the Application
+
+Install the Python dependencies and start the Flask app in the background:
 
 ```bash
-docker build -t ghcp-e2e-demo-verify .
-docker run -d --name verify-app -p 8080:8080 ghcp-e2e-demo-verify
-sleep 5
+pip install -r app/requirements.txt
+python app/main.py &
+sleep 3
 curl -s http://localhost:8080/health
 ```
 
-Wait for the health check to pass. If the app fails to build or start, report
-that as your finding.
+Wait for the health check to return `{"status": "healthy"}`. If the app fails
+to start, report that as your finding.
 
 ### 3. Reproduce the Error
 
@@ -133,15 +140,17 @@ derive them from the issue body.
 
 ### 5. Clean Up
 
+Stop the background Python process:
+
 ```bash
-docker stop verify-app && docker rm verify-app
+kill %1 2>/dev/null || true
 ```
 
 ## Important Notes
 
 - Always take screenshots as evidence
 - Derive ALL test parameters from the issue body — never assume specific endpoints
-- If the app fails to build or start, that itself is a finding — report it
+- If the app fails to install dependencies or start, that itself is a finding — report it
 - Do NOT modify any source code — you are only verifying, not fixing
 - If reproduction steps are unclear, try your best to infer them from the
   traceback and error context, and note any assumptions in your comment
