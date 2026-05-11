@@ -2,7 +2,7 @@ import os
 import threading
 
 from dotenv import load_dotenv
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, render_template, request
 
 load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 
@@ -13,17 +13,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    return jsonify(
-        {
-            "app": "ghcp-e2e-demo",
-            "status": "running",
-            "endpoints": {
-                "/": "This page",
-                "/health": "Health check",
-                "/calculate": "Calculate division (params: a, b)",
-            },
-        }
-    )
+    return render_template("index.html")
 
 
 @app.route("/health")
