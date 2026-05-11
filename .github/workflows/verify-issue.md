@@ -19,27 +19,31 @@ permissions:
 engine: copilot
 
 tools:
-  shell:
+  github:
+    toolsets: [issues]
+
+  bash:
     - docker:*
     - npm:*
     - npx:*
     - cat:*
     - curl:*
     - sleep:*
+    - playwright-cli:*
 
-  playwright-mcp:
-    url: "npx @playwright/mcp@latest"
+  playwright:
+    mode: cli
 
 safe-outputs:
   add-comment:
     target: "${{ github.event.issue.number }}"
     max: 3
 
-  add-label:
+  add-labels:
     target: "${{ github.event.issue.number }}"
     max: 2
 
-  remove-label:
+  remove-labels:
     target: "${{ github.event.issue.number }}"
     max: 2
 
@@ -58,16 +62,18 @@ and classify the issue.
 
 ## Context
 
-The issue you are verifying:
-- **Issue Number**: ${{ github.event.issue.number }}
-- **Issue Title**: ${{ github.event.issue.title }}
-- **Issue Body**: ${{ github.event.issue.body }}
+You are verifying issue **#${{ github.event.issue.number }}**: "${{ github.event.issue.title }}"
+
+First, use the GitHub issues tool to read the full issue body and extract the
+reproduction details.
 
 ## Steps
 
-### 1. Parse the Issue
+### 1. Read and Parse the Issue
 
-Read the issue body carefully. Extract the following from the structured sections:
+Use the GitHub API to fetch the full issue body for issue #${{ github.event.issue.number }}.
+
+Extract the following from the structured sections:
 - **From "Reproduction Steps"**: The exact HTTP method, endpoint, and parameters needed to trigger the error
 - **From "Error Details"**: The error type and message you expect to see
 - **From "Traceback"**: The full stack trace to compare against
@@ -92,12 +98,13 @@ that as your finding.
 
 Using the reproduction steps extracted from the issue:
 
-1. Use Playwright MCP to navigate to `http://localhost:8080/` and take a
-   screenshot to confirm the app is running
-2. Reproduce the error by making the exact request described in the issue
-   (navigate to the endpoint with the specified parameters using Playwright)
-3. Take a screenshot of the response
-4. Verify the HTTP status code and error message match what was reported
+1. Use `playwright-cli screenshot http://localhost:8080/ homepage.png` to
+   confirm the app is running
+2. Reproduce the error by navigating to the exact endpoint described in the
+   issue (e.g., `playwright-cli screenshot "http://localhost:8080/<path>" error.png`)
+3. Also use `curl -s -o /dev/null -w "%{http_code}" "http://localhost:8080/<path>"`
+   to verify the HTTP status code
+4. Use `curl -s "http://localhost:8080/<path>"` to capture the error response body
 5. If the issue mentions specific conditions (e.g., certain parameter values,
    specific request body), test those exact conditions
 

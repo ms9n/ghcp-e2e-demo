@@ -22,7 +22,7 @@ permissions:
 engine: copilot
 
 tools:
-  shell:
+  bash:
     - git:*
     - cat:*
 
