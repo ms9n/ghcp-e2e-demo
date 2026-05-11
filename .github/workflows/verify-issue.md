@@ -10,7 +10,7 @@ on:
   issues:
     types: [labeled]
 
-if: contains(github.event.issue.labels.*.name, 'needs-verification')
+if: github.event.label.name == 'needs-verification'
 
 permissions:
   contents: read
