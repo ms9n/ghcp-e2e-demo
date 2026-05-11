@@ -18,6 +18,11 @@ permissions:
 
 engine: copilot
 
+network:
+  allowed:
+    - defaults
+    - python
+
 tools:
   github:
     toolsets: [issues]
