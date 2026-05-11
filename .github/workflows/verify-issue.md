@@ -94,13 +94,14 @@ traceback and error details to infer what request would trigger the error.
 
 ### 2. Install Dependencies and Run the Application
 
-Install the Python dependencies and start the Flask app in the background:
+Install the Python dependencies and start the Flask app in the background.
+**Important**: Port 8080 is reserved by the runner infrastructure. Use port 5000.
 
 ```bash
 pip install -r app/requirements.txt
-python app/main.py &
+PORT=5000 python app/main.py &
 sleep 3
-curl -s http://localhost:8080/health
+curl -s http://localhost:5000/health
 ```
 
 Wait for the health check to return `{"status": "healthy"}`. If the app fails
@@ -110,13 +111,13 @@ to start, report that as your finding.
 
 Using the reproduction steps extracted from the issue:
 
-1. Use `playwright-cli screenshot http://localhost:8080/ homepage.png` to
+1. Use `playwright-cli screenshot http://localhost:5000/ homepage.png` to
    confirm the app is running
 2. Reproduce the error by navigating to the exact endpoint described in the
-   issue (e.g., `playwright-cli screenshot "http://localhost:8080/<path>" error.png`)
-3. Also use `curl -s -o /dev/null -w "%{http_code}" "http://localhost:8080/<path>"`
+   issue (e.g., `playwright-cli screenshot "http://localhost:5000/<path>" error.png`)
+3. Also use `curl -s -o /dev/null -w "%{http_code}" "http://localhost:5000/<path>"`
    to verify the HTTP status code
-4. Use `curl -s "http://localhost:8080/<path>"` to capture the error response body
+4. Use `curl -s "http://localhost:5000/<path>"` to capture the error response body
 5. If the issue mentions specific conditions (e.g., certain parameter values,
    specific request body), test those exact conditions
 
