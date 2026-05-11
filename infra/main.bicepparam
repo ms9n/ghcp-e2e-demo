@@ -1,8 +1,6 @@
 using 'main.bicep'
 
-param location = 'eastus'
+param location = 'uksouth'
 param baseName = 'ghcpe2e'
 param containerImage = ''
-param copilotGithubToken = ''
-param githubToken = ''
-param githubRepo = ''
+param githubRepo = 'shohamhoffman/ghcp-e2e-demo'
