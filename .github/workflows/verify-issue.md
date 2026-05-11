@@ -61,6 +61,9 @@ safe-outputs:
     target: "${{ github.event.issue.number }}"
     max: 1
 
+  upload-asset:
+    max: 4
+
 timeout-minutes: 15
 ---
 
@@ -158,7 +161,9 @@ kill %1 2>/dev/null || true
   At minimum take these two screenshots:
   1. `playwright-cli screenshot http://localhost:5000/ homepage.png` — proves the app is running
   2. `playwright-cli screenshot "http://localhost:5000/<error-endpoint>" error.png` — shows the error
-  Include both screenshots in your comment as evidence.
+  After taking screenshots, you MUST upload them using the `upload_asset` safe-output tool
+  with the file path. This returns a URL you can embed in your comment with markdown:
+  `![description](returned-url)`. Do NOT use local file paths in your comment.
 - You MUST reproduce the bug by actually running the app (`pip install` + `PORT=5000 python app/main.py &`)
   and hitting the endpoint with `curl`. Do NOT use Flask test client or static analysis as a substitute.
 - Derive ALL test parameters from the issue body — never assume specific endpoints
