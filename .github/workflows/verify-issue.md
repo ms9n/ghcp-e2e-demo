@@ -154,7 +154,13 @@ kill %1 2>/dev/null || true
 
 ## Important Notes
 
-- Always take screenshots as evidence
+- **MANDATORY**: You MUST take screenshots using `playwright-cli screenshot`. This is not optional.
+  At minimum take these two screenshots:
+  1. `playwright-cli screenshot http://localhost:5000/ homepage.png` — proves the app is running
+  2. `playwright-cli screenshot "http://localhost:5000/<error-endpoint>" error.png` — shows the error
+  Include both screenshots in your comment as evidence.
+- You MUST reproduce the bug by actually running the app (`pip install` + `PORT=5000 python app/main.py &`)
+  and hitting the endpoint with `curl`. Do NOT use Flask test client or static analysis as a substitute.
 - Derive ALL test parameters from the issue body — never assume specific endpoints
 - If the app fails to install dependencies or start, that itself is a finding — report it
 - Do NOT modify any source code — you are only verifying, not fixing
