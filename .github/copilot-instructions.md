@@ -1,3 +1,7 @@
+---
+excludeAgent: "cloud-agent"
+---
+
 ## Code Review Instructions
 
 When performing a code review, apply the following guidelines:
