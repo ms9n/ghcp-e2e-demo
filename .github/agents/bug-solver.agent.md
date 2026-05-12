@@ -79,7 +79,6 @@ Create a PR with:
   - Description of the fix
   - Test results
   - Before/after screenshots
-- Request a review from `@copilot` (Code Review Agent)
 
 ## Guidelines
 
