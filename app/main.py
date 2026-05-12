@@ -8,7 +8,15 @@ load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 
 from error_reporter import report_error_sync
 
+from werkzeug.exceptions import NotFound
+
+
 app = Flask(__name__)
+
+
+@app.route("/favicon.ico")
+def favicon():
+    return "", 204
 
 
 @app.route("/")
@@ -39,6 +47,9 @@ def calculate():
 
 @app.errorhandler(Exception)
 def handle_exception(error):
+    if isinstance(error, NotFound):
+        return jsonify({"error": "NotFound", "message": str(error)}), 404
+
     context = {
         "url": request.url,
         "method": request.method,
