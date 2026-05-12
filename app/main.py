@@ -29,7 +29,9 @@ def calculate():
     if a is None or b is None:
         return jsonify({"error": "Both 'a' and 'b' query parameters are required"}), 400
 
-    # BUG: No zero-division guard — this will crash when b=0
+    if b == 0:
+        return jsonify({"error": "Division by zero", "message": "Divisor 'b' cannot be zero"}), 400
+
     result = a / b
 
     return jsonify({"a": a, "b": b, "result": result})
