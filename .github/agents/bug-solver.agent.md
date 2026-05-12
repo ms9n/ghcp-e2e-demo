@@ -15,6 +15,7 @@ mcp-servers:
     type: stdio
     command: npx
     args: ["@playwright/mcp@latest"]
+    tools: [""]
 ---
 
 # Bug Solver Agent
