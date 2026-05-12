@@ -114,7 +114,7 @@ Create the issue now using the create_github_issue tool."""
 
     async with CopilotClient() as client:
         session = await client.create_session(
-            model="claude-opus-4.6",
+            model="gpt-4.1",
             tools=[create_issue_tool],
             on_permission_request=lambda _: {"kind": "approved"},
         )
