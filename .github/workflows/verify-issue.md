@@ -145,6 +145,8 @@ derive them from the issue body.
   - What you tested (exact requests made)
   - What the actual result was (with screenshots)
   - Why the error could not be reproduced
+- Add the label `not-reproducible`
+- Remove the label `needs-verification`
 - Close the issue with the comment
 
 ### 5. Clean Up
