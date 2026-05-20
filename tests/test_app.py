@@ -37,6 +37,6 @@ def test_calculate_missing_params(client):
 
 def test_calculate_division_by_zero(client):
     resp = client.get("/calculate?a=10&b=0")
-    assert resp.status_code == 500
+    assert resp.status_code == 400
     data = resp.get_json()
-    assert data["error"] == "ZeroDivisionError"
+    assert data["error"] == "Division by zero is not allowed"

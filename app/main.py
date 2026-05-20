@@ -37,6 +37,9 @@ def calculate():
     if a is None or b is None:
         return jsonify({"error": "Both 'a' and 'b' query parameters are required"}), 400
 
+    if b == 0:
+        return jsonify({"error": "Division by zero is not allowed"}), 400
+
     result = a / b
 
     return jsonify({"a": a, "b": b, "result": result})
